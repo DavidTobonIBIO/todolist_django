@@ -1,5 +1,6 @@
-{% extends "base.html" %}
- {% block content %}
+{% extends "base.html" %} 
+{% load static %}
+{% block content %}
 
 <div class="container">
   <!-- header section -->
@@ -25,75 +26,87 @@
     {% endif %}
   </div>
 
-  <!-- tasks section -->
-  {% if tasks %} 
-  {% for task in tasks %}
-  <div class="card mb-3 {{ task.priority_color_class }}">
-    <!-- card header -->
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">{{ task.title }}</h5>
-      <span class="badge {{ task.priority_badge_class }}">
-        {{ task.get_priority_display }}
-      </span>
-    </div>
+  <div class=col-md-4"> {% include 'tasks/task_lists_component.html' %}
+</div>
+<!-- tasks section -->
+{% if tasks %} 
+{% for task in tasks %}
+<div class="card mb-3 {{ task.priority_color_class }}">
+  <!-- card header -->
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">{{ task.title }}</h5>
+    <span class="badge {{ task.priority_badge_class }}">
+      {{ task.get_priority_display }}
+    </span>
+  </div>
 
-    <!-- card body -->
-    <div class="card-body" style="cursor: pointer;" onclick="window.location.href='{% url 'edit-task' task.pk %}'">
-      {% if task.description %}
-      <p class="card-text">{{ task.description }}</p>
-      {% endif %}
+  <!-- card body -->
+  <div
+    class="card-body"
+    style="cursor: pointer"
+    onclick="window.location.href='{% url 'edit-task' task.pk %}'"
+  >
+    {% if task.description %}
+    <p class="card-text">{{ task.description }}</p>
+    {% endif %}
 
-      <!-- due date and task list -->
-      <div class="row mb-3">
-        <div class="col-md-2 mb-2">
-      <small class="text-muted">
-        <i class="bi bi-calendar-event"></i>
-        <strong>Due:</strong> {{ task.due_date|date:"F d, Y" }} 
-      </small>
-    </div>
-    <div class="col-md-2 mb-2">
-      <small class="text-muted">
-        <i class="bi bi-collection"></i>
-        <strong>List:</strong> <span class="badge bg-secondary ms-2">{{ task.task_list.name }}</span>
-      </small>
-    </div>
+    <!-- due date and task list -->
+    <div class="row mb-3">
+      <div class="col-md-2 mb-2">
+        <small class="text-muted">
+          <i class="bi bi-calendar-event"></i>
+          <strong>Due:</strong> {{ task.due_date|date:"F d, Y" }}
+        </small>
       </div>
-      
-      <!-- completion checkbox and delete button -->
-      <div class="row mt-3">
-        <div class="col-md-8 text-start">
-          <!-- completion checkbox -->
-          <div class="form-check" onclick="event.stopPropagation();">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="complete-{{ task.pk }}"
-              {% if task.completed %}checked{% endif %}
-              onchange="window.location.href='{% url 'toggle-complete' task.pk %}'"
-            >
-            <label class="form-check-label" for="complete-{{ task.pk }}">
+      <div class="col-md-2 mb-2">
+        <small class="text-muted">
+          <i class="bi bi-collection"></i>
+          <strong>List:</strong>
+          <span class="badge bg-secondary ms-2">{{ task.task_list.name }}</span>
+        </small>
+      </div>
+    </div>
+
+    <!-- completion checkbox and delete button -->
+    <div class="row mt-3">
+      <div class="col-md-8 text-start">
+        <!-- completion checkbox -->
+        <div class="form-check" onclick="event.stopPropagation();">
+          <input
+            class="form-check-input task-checkbox"
+            type="checkbox"
+            id="complete-{{ task.pk }}"
+            data-task-id="{{ task.pk }}"
+            {% if task.completed %} checked {% endif %}
+          />
+          <label class="form-check-label" for="complete-{{ task.pk }}">
+            <span class="checkbox-label">
               {% if task.completed %}
-                <span class="text-success">Completed</span>
-              {% else %}
-                Done
-              {% endif %}
-            </label>
-          </div>
+              <span class="text-success">Completed</span>
+              {% else %} Done {% endif %}
+            </span>
+          </label>
         </div>
-        <div class="col-md-4 text-end">
-          <!-- Delete button -->
-          <div onclick="event.stopPropagation();">
-            <a href="{% url 'delete-task' task.pk %}" class="btn btn-outline-danger btn-sm">
-              <i class="bi bi-trash"></i>
-            </a>
-          </div>
+      </div>
+      <div class="col-md-4 text-end">
+        <!-- Delete button -->
+        <div onclick="event.stopPropagation();">
+          <a
+            href="{% url 'delete-task' task.pk %}"
+            class="btn btn-outline-danger btn-sm"
+          >
+            <i class="bi bi-trash"></i>
+          </a>
         </div>
       </div>
     </div>
+  </div>
 
     <!-- card footer with created_at info -->
     <div class="card-footer text-muted">
-      <small>Created {{ task.created_at|timesince }} ago</small>
+      <small
+        >Created {{ task.created_at|timesince }} ago by {% if request.user == task.user %} You {% else %} @{{ task.user }} {% endif %}</small
+      >
     </div>
   </div>
   {% endfor %} 
@@ -107,15 +120,19 @@
     </a>
   </div>
   {% else %}
-    <div class="text-center py-5">
-        <i class="bi bi-check-circle display-1 text-muted"></i>
-        <h3 class="mt-3 text-muted">No completed tasks</h3>
-        <p class="text-muted">Complete some tasks and they'll appear here!</p>
-        <a href="{% url 'task-list' %}" class="btn btn-dark">
-            <i class="bi bi-list-task"></i> View Active Tasks
-        </a>
-    </div>
+  <div class="text-center py-5">
+    <i class="bi bi-check-circle display-1 text-muted"></i>
+    <h3 class="mt-3 text-muted">No completed tasks</h3>
+    <p class="text-muted">Complete some tasks and they'll appear here!</p>
+    <a href="{% url 'task-list' %}" class="btn btn-dark">
+      <i class="bi bi-list-task"></i> View Active Tasks
+    </a>
+  </div>
   {% endif %}
 </div>
 
 {% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'js/tasks_script.js' %}"></script>
+{% endblock %}

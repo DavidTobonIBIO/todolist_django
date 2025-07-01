@@ -83,16 +83,15 @@
                             <!-- Delete button -->
                             <div>
                                 {% if action == "edit" %}
-                                <a href="{% url 'delete-task' task.pk %}" class="btn btn-danger" 
-                                   onclick="return confirm('Are you sure you want to delete this task?')">
-                                    <i class="bi bi-trash"></i> Delete Task
+                                <a href="{% url 'delete-task' task.pk %}" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Delete
                                 </a>
                                 {% endif %}
                             </div>
                             
                             <!-- cancel and confirm buttons -->
                             <div class="d-flex gap-2">
-                                <a href="{% url 'task-list' %}" class="btn btn-secondary">
+                                <a href="{{request.META.HTTP_REFERER}}" class="btn btn-secondary">
                                     <i class="bi bi-x-circle"></i> Cancel
                                 </a>
                                 <button type="submit" class="btn btn-success">
