@@ -12,6 +12,7 @@ def task_list(request):
     selected_list_id = request.GET.get("list_id", "all")
 
     if selected_list_id == "all":
+        # all tasks the user has access to
         tasks = Task.objects.filter(
             Q(user=request.user) | Q(task_list__shared_with=request.user) | Q(task_list__user=request.user)
         ).filter(completed=False)
@@ -86,6 +87,8 @@ def create_task(request):
 
     if request.method == "POST":
         task_list_name = request.POST.get("task_list_name")
+        
+        # default task list name of user didnt provide info
         if task_list_name == "":
             task_list_name = "My Tasks"
         
@@ -95,6 +98,7 @@ def create_task(request):
             )
 
         except TaskList.DoesNotExist:
+            # create default list
             task_list = TaskList.objects.create(
                 user=request.user,
                 name=task_list_name,
@@ -117,7 +121,7 @@ def create_task(request):
         Q(user=request.user) | Q(shared_with=request.user)
     ).order_by("name")
 
-    # Pre-select the list if coming from a specific list view
+    # selected_list used when coming from a view of an specific list
     selected_list = None
     if selected_list_id:
         try:
@@ -153,7 +157,7 @@ def edit_task(request, pk):
         return redirect("task-list")
 
     if request.method == "POST":
-        # Only list owner can change the task list
+        # only list owner can change task list
         if task.task_list.user == request.user:
             task_list_name = request.POST.get("task_list_name")
             task_list, created = TaskList.objects.get_or_create(
@@ -187,7 +191,7 @@ def delete_task(request, pk):
     except Task.DoesNotExist:
         return redirect("task-list")
         
-    # Only task creator or list owner can delete tasks
+    # only task creator or list owner can delete tasks
     if not (task.user == request.user or task.task_list.user == request.user):
         messages.error(request, "You don't have permission to delete this task.")
         return redirect("task-list")
@@ -215,7 +219,6 @@ def toggle_complete(request, pk):
                 }
             )
 
-    # Check if user has permission (task owner, list owner, or shared user)
     if not (
         task.user == request.user
         or request.user in task.task_list.shared_with.all()
@@ -248,7 +251,7 @@ def toggle_complete(request, pk):
             }
         )
 
-    # fallback: handle regular requests with page reload
+    # handle regular requests with page reload
     if previous_state == True:
         return redirect("completed-tasks")
     return redirect("task-list")

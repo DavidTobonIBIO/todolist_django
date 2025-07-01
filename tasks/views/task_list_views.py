@@ -55,6 +55,7 @@ def share_list(request, list_id):
 
 @login_required
 def unshare_list(request, list_id, user_id):
+    # user_id: id of the user to revoke shared state
     try:
         task_list = get_object_or_404(TaskList, id=list_id)
         user_to_remove = get_object_or_404(User, id=user_id)

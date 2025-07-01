@@ -17,14 +17,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const csrftoken = getCookie("csrftoken");
 
-  // Add event listeners to all task checkboxes
+  //  event listeners to all task checkboxes
   document.querySelectorAll(".task-checkbox").forEach(function (checkbox) {
     checkbox.addEventListener("change", function () {
       const taskId = this.getAttribute("data-task-id");
       const isChecked = this.checked;
       const taskCard = this.closest(".card");
 
-      // isable checkbox during request
+      // disable checkbox during request
       this.disabled = true;
 
       // AJAX request
@@ -37,13 +37,12 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         credentials: "same-origin",
       })
+      // remove task on succes or revert checkbox state on error
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            // remove the task card from the DOM
             taskCard.remove();
           } else {
-            // revert checkbox state on error
             this.checked = !isChecked;
           }
         })
@@ -52,8 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
           this.checked = !isChecked;
         })
         .finally(() => {
-          // re-enable checkbox after operation
-          this.disabled = false;
+          this.disabled = false; // enable checkbox again
         });
     });
   });

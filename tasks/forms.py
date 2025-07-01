@@ -35,7 +35,6 @@ class TaskForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
-        # Filter task lists to show only user's lists
         if user:
             self.fields['task_list'].queryset = TaskList.objects.filter(user=user)
             self.fields['task_list'].required = False
