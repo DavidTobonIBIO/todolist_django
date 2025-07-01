@@ -24,10 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const isChecked = this.checked;
       const taskCard = this.closest(".card");
 
-      // Disable checkbox during request
+      // isable checkbox during request
       this.disabled = true;
 
-      // Make AJAX request
+      // AJAX request
       fetch(`/tasks/toggle/${taskId}/`, {
         method: "POST",
         headers: {
@@ -42,12 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
           if (data.success) {
             // remove the task card from the DOM
             taskCard.remove();
-
-            // if there are no more tasks show empty state
-            const remainingTasks = document.querySelectorAll(".card");
-            if (remainingTasks.length === 0) {
-              showEmptyState();
-            }
           } else {
             // revert checkbox state on error
             this.checked = !isChecked;
