@@ -1,0 +1,40 @@
+/* Priority color classes */
+.priority-high {
+    border-left: 4px solid #dc3545;
+    /* Bootstrap red */
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.priority-medium {
+    border-left: 4px solid #ffc107;
+    /* Bootstrap yellow */
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.priority-low {
+    border-left: 4px solid #198754;
+    /* Bootstrap green */
+    background-color: rgba(25, 135, 84, 0.1);
+}
+
+/* Priority badges */
+.badge-priority-high {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-priority-medium {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-priority-low {
+    background-color: #198754;
+    color: white;
+}
+
+/* Task completion styling */
+.task-completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+}

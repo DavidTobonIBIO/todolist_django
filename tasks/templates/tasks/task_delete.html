@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <!-- Confirmation Card -->
+            <div class="card border-danger shadow">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-trash"></i> Confirm Deletion
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Are you sure you want to delete the task 
+                        <strong>"{{ task.title }}"</strong>?
+                    </p>
+                    
+                    <!-- Task Details -->
+                    <div class="alert alert-light">
+                        <div class="row">
+                            <div class="col-sm-4"><strong>Priority:</strong></div>
+                            <div class="col-sm-8">
+                                <span class="badge {{ task.priority_badge_class }}">
+                                    {{ task.get_priority_display }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><strong>Due Date:</strong></div>
+                            <div class="col-sm-8">{{ task.due_date|date:"F d, Y" }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4"><strong>List:</strong></div>
+                            <div class="col-sm-8">{{ task.task_list.name }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        This action cannot be undone.
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'task-list' %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <form method="POST" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

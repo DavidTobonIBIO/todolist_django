@@ -1,0 +1,52 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'task-list'%}">
+      <i class="bi bi-check-circle-fill"></i>
+      To-Do App
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'task-list' %}">
+            <i class="bi bi-list-task"></i> My Tasks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'completed-tasks' %}">
+            <i class="bi bi-check-circle"></i> Completed
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- user section -->
+    <div class="d-flex align-items-center">
+      <div class="me-3">
+        <a class="nav-link d-flex align-items-center" href="#">
+          <img src="{% static 'images/avatar.svg' %}" width="30" class="me-2" />
+          {{ user.username }}
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'logout' %}">
+          <button type="button" class="btn btn-outline-secondary">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

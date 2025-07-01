@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+{% load static %}
+{% load crispy_forms_tags %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+    <title>{% block title %}To-Do List App using Django{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+
+    {% comment %}
+    <!-- jQuery (for AJAX functionality) -->
+    {% endcomment %} {% comment %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% endcomment %}
+
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}" />
+  </head>
+  <body>
+    {% if user.is_authenticated %}
+    {% include "navbar.html" %}
+    {% endif %}
+
+    <div class="wrapper">
+
+      <!-- Main Content -->
+      <div class="content">
+        <div class="container mt-4">
+          <!-- Flash Messages -->
+          {% if messages %}
+          <div class="row">
+            <div class="col-12">
+              {% for message in messages %}
+              <div
+                class="alert alert-danger alert-dismissible fade show"
+                role="alert"
+              >
+                {{ message }}
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                ></button>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Main Content Area -->
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- CSRF Token for AJAX -->
+    {% comment %}
+    <script>
+      // Get CSRF token for AJAX requests
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      const csrftoken = getCookie("csrftoken");
+
+      // Set up AJAX to include CSRF token
+      $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+          if (
+            !(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))
+          ) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        },
+      });
+    </script>
+    {% endcomment %}
+  </body>
+</html>

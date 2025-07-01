@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Page Header -->
+            <div class="mb-4">
+                {% if action == "create" %}
+                <h2><i class="bi bi-plus-circle"></i> New Task</h2>
+                {% else %}
+                <h2><i class="bi bi-pencil-square"></i> Edit "{{ task.title }}" Task</h2>
+                {% endif %}
+            </div>
+
+            <!-- Form Card -->
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Title Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">
+                                <strong>Task Title</strong> <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.title.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                <strong>Description</strong>
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.description.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Due Date and Priority Row -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.due_date.id_for_label }}" class="form-label">
+                                        <strong>Due Date</strong> <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.due_date }}
+                                    {% if form.due_date.errors %}
+                                        <div class="text-danger mt-1">
+                                            {{ form.due_date.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.priority.id_for_label }}" class="form-label">
+                                        <strong>Priority</strong>
+                                    </label>
+                                    {{ form.priority }}
+                                    {% if form.priority.errors %}
+                                        <div class="text-danger mt-1">
+                                            {{ form.priority.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task List Field -->
+                        <div class="mb-4">
+                            <label for="task_list" class="form-label">
+                                <strong>Task List</strong>
+                            </label>
+                            <input type="text" name="task_list_name" list="task_list-list" value="{{task.task_list.name}}"/>
+                            <datalist id="task_list-list">
+                                <select id="task_list">
+                                    {% for task_list in task_lists %}
+                                        <option value="{{task_list.name}}">{{ task_list.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </datalist>
+                            <div class="form-text">
+                                Search or create new list
+                            </div>
+                        </div>
+
+                        <!-- Form Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'task-list' %}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Confirm
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
