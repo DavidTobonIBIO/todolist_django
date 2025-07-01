@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          
+          <!-- share form -->
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="mb-3"> Share with New User</h5>
+              <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                  <div class="form-text">Enter the exact username of the person you want to share this list with.</div>
+                  <input type="text" class="form-control" id="username" name="username" required 
+                         placeholder="Enter username..." maxlength="150">
+                </div>
+                
+                <button type="submit" class="btn btn-dark">
+                  <i class="bi bi-share-fill"></i> Share
+                </button>
+              </form>
+            </div>
+            
+            <!-- shared with section -->
+            <div class="col-md-6">
+              <p class="mb-3">
+                <i class="bi bi-people-fill"></i> Currently shared with 
+              </p>
+              
+              {% if shared_users %}
+                <div class="list-group">
+                  {% for user in shared_users %}
+                  <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <i class="bi bi-person-fill text-primary"></i> 
+                      <strong>@{{ user.username }}</strong>
+                      {% if user.get_full_name %}
+                        <small class="text-muted d-block">{{ user.get_full_name }}</small>
+                      {% endif %}
+                      {% if user.email %}
+                        <small class="text-muted d-block">{{ user.email }}</small>
+                      {% endif %}
+                    </div>
+                    <a href="{% url 'unshare-list' list_id=task_list.id user_id=user.id %}" 
+                       class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Remove {{ user.username }} from this list?')"
+                       title="Remove access">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- back button -->
+          <hr class="my-4">
+          <div class="text-center">
+            <a href="{% url 'task-list' %}" class="btn btn-secondary">
+              <i class="bi bi-arrow-left"></i> Back to Task Lists
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- info card -->
+      <div class="card mt-3">
+        <div class="card-body">
+          <h6 class="card-title"><i class="bi bi-info-circle"></i> Sharing Information</h6>
+          <ul class="small text-muted mb-0">
+            <li>Users you share with can view and add tasks to this list</li>
+            <li>Shared users can also complete tasks but cannot delete the list</li>
+            <li>You can remove access at any time by clicking the "×" button</li>
+            <li>Make sure to enter the exact username (case-sensitive)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

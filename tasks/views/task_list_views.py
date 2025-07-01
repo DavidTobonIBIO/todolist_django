@@ -32,10 +32,13 @@ def share_list(request, list_id):
             try:
                 user = User.objects.get(username=username)
                 if user != request.user:
-                    task_list.shared_with.add(user)
-                    messages.success(
-                        request, f"List shared with {username} successfully!"
-                    )
+                    if user not in task_list.shared_with.all():
+                        task_list.shared_with.add(user)
+                        messages.success(
+                            request, f"List shared with {username} successfully!"
+                        )
+                    else:
+                        messages.warning(request, f"List is already shared with {username}.")
                 else:
                     messages.error(request, "You cannot share a list with yourself.")
             except User.DoesNotExist:
@@ -43,18 +46,31 @@ def share_list(request, list_id):
         else:
             messages.error(request, "Username is required.")
 
-    return redirect("task-list")
+    context = {
+        'task_list': task_list,
+        'shared_users': task_list.shared_with.all(),
+    }
+    return render(request, 'tasks/share_list.html', context)
 
 
 @login_required
 def unshare_list(request, list_id, user_id):
-    task_list = get_object_or_404(TaskList, id=list_id, user=request.user)
-    user = get_object_or_404(User, id=user_id)
-
-    task_list.shared_with.remove(user)
-    messages.success(request, f"List no longer shared with {user.username}.")
-
-    return redirect("task-list")
+    try:
+        task_list = get_object_or_404(TaskList, id=list_id)
+        user_to_remove = get_object_or_404(User, id=user_id)
+    except:
+        return redirect('task-list')
+            
+    if user_to_remove in task_list.shared_with.all():
+        task_list.shared_with.remove(user_to_remove)
+        
+    else:
+        messages.error(request, "User is not shared with this list.")
+    
+    if task_list.user == request.user:
+        return redirect('share-list', list_id=list_id)
+    else:
+        return redirect('task-list')
 
 
 @login_required

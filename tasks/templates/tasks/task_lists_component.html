@@ -6,7 +6,7 @@
     </a>
   </div>
   
-  <!-- All Tasks Option -->
+  <!-- all tasks option -->
   <div class="mb-3">
     <a href="{% url 'task-list' %}" 
        class="d-block p-2 text-decoration-none rounded 
@@ -17,7 +17,7 @@
 
   <hr>
 
-  <!-- Owned Lists Section -->
+  <!-- owned lists -->
   <div class="mb-3">
     <h6 class="text-muted mb-2">
       <i class="bi bi-person-fill"></i> My Lists
@@ -33,6 +33,7 @@
           <i class="bi bi-folder2"></i> {{ task_list.name }}
         </a>
       </div>
+      <!-- share and delete buttons -->
       <div class="d-flex">
         <a href="{% url 'share-list' task_list.id %}" 
            class="btn btn-sm me-1
@@ -53,10 +54,10 @@
 
   <hr>
 
-  <!-- Shared Lists Section -->
+  <!-- shared lists -->
   <div class="mb-3">
     <h6 class="text-muted mb-2">
-      <i class="bi bi-people-fill"></i> Shared With Me
+      <i class="bi bi-people-fill"></i> Shared with me
     </h6>
     
     {% for task_list in shared_lists %}
@@ -72,15 +73,13 @@
           by @{{ task_list.user.username }}
         </small>
       </div>
-      <a href="{% url 'unshare-list' task_list.id %}" 
+      <a href="{% url 'unshare-list' list_id=task_list.id user_id=request.user.id %}" 
          class="btn btn-sm btn-outline-danger"
          onclick="return confirm('Are you sure you want to leave this shared list?')"
          title="Leave this list">
         <i class="bi bi-x-lg"></i>
       </a>
     </div>
-    {% empty %}
-    <p class="text-muted small text-center">No shared lists</p>
     {% endfor %}
   </div>
 </div>

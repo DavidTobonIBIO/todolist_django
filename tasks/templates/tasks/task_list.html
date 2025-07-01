@@ -4,7 +4,7 @@
 {% block content %}
 <div class="d-flex" style="min-height: 100vh;">
   {% if page_title == 'My Tasks' %}
-  <!-- Left Sidebar - Task Lists (fixed to the left) -->
+  <!-- sidebar: task lists -->
   <div class="sidebar" style="width: 280px; background-color: #f8f9fa; border-right: 1px solid #dee2e6;">
     <div class="sticky-top p-3" style="top: 0;">
       {% include 'tasks/task_lists_component.html' %}
@@ -12,7 +12,6 @@
   </div>
   {% endif %}
 
-  <!-- Main Content Area -->
   <div class="flex-grow-1">
     <div class="container-fluid p-4">
       <!-- header section -->
@@ -23,7 +22,7 @@
           <p class="text-muted mb-0">
             <i class="bi bi-folder2"></i> {{ selected_list.name }}
             {% if selected_list.user != request.user %}
-            <small class="badge bg-info ms-2">Shared by @{{ selected_list.user.username }}</small>
+            <small class="badge bg-dark ms-2">Shared by @{{ selected_list.user.username }}</small>
             {% endif %}
           </p>
           {% endif %}

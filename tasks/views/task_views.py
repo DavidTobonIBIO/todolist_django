@@ -13,7 +13,7 @@ def task_list(request):
 
     if selected_list_id == "all":
         tasks = Task.objects.filter(
-            Q(user=request.user) | Q(task_list__shared_with=request.user)
+            Q(user=request.user) | Q(task_list__shared_with=request.user) | Q(task_list__user=request.user)
         ).filter(completed=False)
         selected_list = None
     else:
@@ -88,9 +88,17 @@ def create_task(request):
         task_list_name = request.POST.get("task_list_name")
         if task_list_name == "":
             task_list_name = "My Tasks"
-        task_list, created = TaskList.objects.get_or_create(
-            name=task_list_name, user=request.user
-        )
+        
+        try:
+            task_list = TaskList.objects.get(
+                Q(name=task_list_name), Q(user=request.user) | Q(shared_with=request.user)
+            )
+
+        except TaskList.DoesNotExist:
+            task_list = TaskList.objects.create(
+                user=request.user,
+                name=task_list_name,
+            )
 
         Task.objects.create(
             user=request.user,
@@ -135,7 +143,7 @@ def create_task(request):
 def edit_task(request, pk):
     task = get_object_or_404(Task, pk=pk)
 
-    # Check if user has permission (owner or shared list member)
+    # Check if user has permission (task owner, list owner, or shared user)
     if not (
         task.user == request.user
         or request.user in task.task_list.shared_with.all()
@@ -145,16 +153,18 @@ def edit_task(request, pk):
         return redirect("task-list")
 
     if request.method == "POST":
-        task_list_name = request.POST.get("task_list_name")
-        task_list, created = TaskList.objects.get_or_create(
-            name=task_list_name, user=request.user
-        )
+        # Only list owner can change the task list
+        if task.task_list.user == request.user:
+            task_list_name = request.POST.get("task_list_name")
+            task_list, created = TaskList.objects.get_or_create(
+                name=task_list_name, user=request.user
+            )
+            task.task_list = task_list
 
         task.title = request.POST.get("title")
         task.description = request.POST.get("description")
         task.due_date = request.POST.get("due_date")
         task.priority = request.POST.get("priority")
-        task.task_list = task_list
         task.save()
 
         return redirect("task-list")
@@ -171,13 +181,14 @@ def edit_task(request, pk):
 
 @login_required
 def delete_task(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-
-    if not (
-        task.user == request.user
-        or request.user in task.task_list.shared_with.all()
-        or task.task_list.user == request.user
-    ):
+    task = None
+    try:
+        task = Task.objects.get(pk=pk)
+    except Task.DoesNotExist:
+        return redirect("task-list")
+        
+    # Only task creator or list owner can delete tasks
+    if not (task.user == request.user or task.task_list.user == request.user):
         messages.error(request, "You don't have permission to delete this task.")
         return redirect("task-list")
 
@@ -191,8 +202,20 @@ def delete_task(request, pk):
 
 @login_required
 def toggle_complete(request, pk):
-    task = get_object_or_404(Task, pk=pk, user=request.user)
+    task = None
+    try:
+        task = Task.objects.get(pk=pk)
+    except Task.DoesNotExist:
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse(
+                {
+                    "success": True,
+                    "completed": False,
+                    "task_id": 0,
+                }
+            )
 
+    # Check if user has permission (task owner, list owner, or shared user)
     if not (
         task.user == request.user
         or request.user in task.task_list.shared_with.all()
