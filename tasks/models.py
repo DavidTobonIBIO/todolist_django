@@ -5,7 +5,7 @@ from datetime import date
 
 
 class TaskList(models.Model):
-    owner = models.ForeignKey(
+    user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="owned_lists"
     )
     name = models.CharField(max_length=100)
@@ -23,7 +23,7 @@ class TaskList(models.Model):
     def get_or_create_default_list(cls, user):
         """Get or create the default 'My Tasks' list for a user"""
         default_list, created = cls.objects.get_or_create(
-            name="My Tasks", owner=user, defaults={}
+            name="My Tasks", user=user, defaults={}
         )
         return default_list
 
@@ -36,7 +36,7 @@ class Task(models.Model):
         ("low", "Low"),
     ]
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tasks")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tasks")
 
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
@@ -74,18 +74,7 @@ class Task(models.Model):
         elif not self.completed:
             self.completed_at = None
 
-        # Assign to "My Tasks" list if no list is specified
-        # if not self.task_list_id:
-        #     self.task_list_id = TaskList.get_or_create_default_list(self.owner).id
-
         super().save(*args, **kwargs)
-
-    @property
-    def is_overdue(self):
-        """Check if task is overdue"""
-        if self.completed:
-            return False
-        return self.due_date < date.today()
 
     @property
     def priority_color_class(self):

@@ -37,6 +37,6 @@ class TaskForm(forms.ModelForm):
         
         # Filter task lists to show only user's lists
         if user:
-            self.fields['task_list'].queryset = TaskList.objects.filter(owner=user)
+            self.fields['task_list'].queryset = TaskList.objects.filter(user=user)
             self.fields['task_list'].required = False
             self.fields['task_list'].empty_label = "My Tasks"

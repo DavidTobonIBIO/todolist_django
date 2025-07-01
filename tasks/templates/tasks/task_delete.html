@@ -45,7 +45,7 @@
 
                     <!-- Action Buttons -->
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'task-list' %}" class="btn btn-secondary me-md-2">
+                        <a href="{{request.META.HTTP_REFERER}}" class="btn btn-secondary me-md-2">
                             <i class="bi bi-x-circle"></i> Cancel
                         </a>
                         <form method="POST" class="d-inline">

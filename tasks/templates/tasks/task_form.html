@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <!-- Page Header -->
+            <!-- header -->
             <div class="mb-4">
                 {% if action == "create" %}
                 <h2><i class="bi bi-plus-circle"></i> New Task</h2>
@@ -14,39 +14,29 @@
                 {% endif %}
             </div>
 
-            <!-- Form Card -->
+            <!-- form-->
             <div class="card shadow">
                 <div class="card-body p-4">
                     <form method="POST">
                         {% csrf_token %}
                         
-                        <!-- Title Field -->
+                        <!-- title field -->
                         <div class="mb-3">
                             <label for="{{ form.title.id_for_label }}" class="form-label">
                                 <strong>Task Title</strong> <span class="text-danger">*</span>
                             </label>
                             {{ form.title }}
-                            {% if form.title.errors %}
-                                <div class="text-danger mt-1">
-                                    {{ form.title.errors }}
-                                </div>
-                            {% endif %}
                         </div>
 
-                        <!-- Description Field -->
+                        <!-- description field -->
                         <div class="mb-3">
                             <label for="{{ form.description.id_for_label }}" class="form-label">
                                 <strong>Description</strong>
                             </label>
                             {{ form.description }}
-                            {% if form.description.errors %}
-                                <div class="text-danger mt-1">
-                                    {{ form.description.errors }}
-                                </div>
-                            {% endif %}
                         </div>
 
-                        <!-- Due Date and Priority Row -->
+                        <!-- due_date and priority -->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -54,11 +44,6 @@
                                         <strong>Due Date</strong> <span class="text-danger">*</span>
                                     </label>
                                     {{ form.due_date }}
-                                    {% if form.due_date.errors %}
-                                        <div class="text-danger mt-1">
-                                            {{ form.due_date.errors }}
-                                        </div>
-                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -67,41 +52,54 @@
                                         <strong>Priority</strong>
                                     </label>
                                     {{ form.priority }}
-                                    {% if form.priority.errors %}
-                                        <div class="text-danger mt-1">
-                                            {{ form.priority.errors }}
-                                        </div>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Task List Field -->
+                        <!-- task_list field -->
                         <div class="mb-4">
                             <label for="task_list" class="form-label">
                                 <strong>Task List</strong>
                             </label>
-                            <input type="text" name="task_list_name" list="task_list-list" value="{{task.task_list.name}}"/>
+                            <input 
+                                type="text" 
+                                name="task_list_name" 
+                                list="task_list-list" 
+                                class="form-control"
+                                value="{% if task %}{{ task.task_list.name }}{% endif %}"
+                            />
                             <datalist id="task_list-list">
-                                <select id="task_list">
-                                    {% for task_list in task_lists %}
-                                        <option value="{{task_list.name}}">{{ task_list.name }}</option>
-                                    {% endfor %}
-                                </select>
+                                {% for task_list in task_lists %}
+                                    <option value="{{ task_list.name }}">{{ task_list.name }}</option>
+                                {% endfor %}
                             </datalist>
                             <div class="form-text">
-                                Search or create new list
+                                Search a list or create a new one
                             </div>
                         </div>
 
-                        <!-- Form Buttons -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'task-list' %}" class="btn btn-secondary me-md-2">
-                                <i class="bi bi-x-circle"></i> Cancel
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check-circle"></i> Confirm
-                            </button>
+                        <!-- buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <!-- Delete button -->
+                            <div>
+                                {% if action == "edit" %}
+                                <a href="{% url 'delete-task' task.pk %}" class="btn btn-danger" 
+                                   onclick="return confirm('Are you sure you want to delete this task?')">
+                                    <i class="bi bi-trash"></i> Delete Task
+                                </a>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- cancel and confirm buttons -->
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'task-list' %}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> 
+                                    {% if action == "create" %}Create Task{% else %}Save Changes{% endif %}
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>

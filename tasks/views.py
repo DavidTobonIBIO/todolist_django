@@ -8,7 +8,7 @@ from .forms import TaskForm
 
 @login_required
 def task_list(request):
-    tasks = Task.objects.filter(Q(owner=request.user), Q(completed=False)).order_by(
+    tasks = Task.objects.filter(Q(user=request.user), Q(completed=False)).order_by(
         "due_date", "-priority"
     )
 
@@ -18,7 +18,7 @@ def task_list(request):
 
 @login_required
 def completed_tasks(request):
-    tasks = Task.objects.filter(Q(owner=request.user), Q(completed=True))
+    tasks = Task.objects.filter(Q(user=request.user), Q(completed=True))
 
     context = {"page_title": "Completed Tasks", "tasks": tasks}
     return render(request, "tasks/task_list.html", context)
@@ -30,10 +30,10 @@ def create_task(request):
         task_list_name = request.POST.get("task_list_name")
         if task_list_name == '':
             task_list_name = "My Tasks"
-        task_list, created = TaskList.objects.get_or_create(name=task_list_name, owner=request.user)
+        task_list, created = TaskList.objects.get_or_create(name=task_list_name, user=request.user)
 
         Task.objects.create(
-            owner=request.user,
+            user=request.user,
             title=request.POST.get("title"),
             description=request.POST.get("description"),
             due_date=request.POST.get("due_date"),
@@ -44,20 +44,20 @@ def create_task(request):
         return redirect("task-list")
 
     form = TaskForm()
-    task_lists = TaskList.objects.filter(owner=request.user)
+    task_lists = TaskList.objects.filter(user=request.user)
     context = {"form": form, "task_lists": task_lists, "action": "create"}
     return render(request, "tasks/task_form.html", context)
 
 
 @login_required
 def edit_task(request, pk):
-    task = get_object_or_404(Task, pk=pk, owner=request.user)
+    task = get_object_or_404(Task, pk=pk, user=request.user)
     
     if request.method == "POST":
         task_list_name = request.POST.get("task_list_name")
-        task_list, created = TaskList.objects.get_or_create(name=task_list_name, owner=request.user)
+        task_list, created = TaskList.objects.get_or_create(name=task_list_name, user=request.user)
 
-        task.name = request.POST.get("name")
+        task.title = request.POST.get("title")
         task.description = request.POST.get("description")
         task.due_date = request.POST.get("due_date")
         task.priority = request.POST.get("priority")
@@ -70,7 +70,7 @@ def edit_task(request, pk):
         return redirect("task-list")
 
     form = TaskForm(instance=task)
-    task_lists = TaskList.objects.filter(owner=request.user)
+    task_lists = TaskList.objects.filter(user=request.user)
     context = {"form": form, "task": task, "task_lists": task_lists, "action": "edit"}
     print(task.task_list.name)
     return render(request, "tasks/task_form.html", context)
@@ -78,7 +78,7 @@ def edit_task(request, pk):
 
 @login_required
 def delete_task(request, pk):
-    task = get_object_or_404(Task, pk=pk, owner=request.user)
+    task = get_object_or_404(Task, pk=pk, user=request.user)
 
     if request.method == "POST":
         completed = task.completed
@@ -93,13 +93,14 @@ def delete_task(request, pk):
 
 @login_required
 def toggle_complete(request, pk):
-    task = get_object_or_404(Task, pk=pk, owner=request.user)
+    task = get_object_or_404(Task, pk=pk, user=request.user)
+    previous_state = task.completed
     task.completed = not task.completed
     task.save()
 
     status = "completed" if task.completed else "reopened"
     # messages.success(request, f'Task "{task.title}" {status}!')
-    if not task.completed:
+    if previous_state == True:
         # if the task was completed before changing state, then redirect to the view where it was located before state change
         return redirect("completed-tasks")
     return redirect("task-list")
