@@ -102,7 +102,7 @@ def create_task(request):
         )
 
         if selected_list_id:
-            return redirect(f"task-list?list_id={selected_list_id}")
+            return redirect(f"/?list_id={selected_list_id}")
         return redirect("task-list")
 
     all_lists = TaskList.objects.filter(

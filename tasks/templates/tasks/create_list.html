@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+              <label for="list_name" class="form-label">
+                <i class="bi bi-folder2"></i> List Name
+              </label>
+              <input type="text" class="form-control" id="list_name" name="name" required 
+                     placeholder="Enter list name..." maxlength="100">
+              <div class="form-text">Name for your task list.</div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'task-list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Go Back
+              </a>
+              <button type="submit" class="btn btn-dark">
+                <i class="bi bi-plus-circle"></i> Create List
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

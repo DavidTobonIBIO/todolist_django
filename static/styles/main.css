@@ -33,8 +33,17 @@
     color: white;
 }
 
-/* Task completion styling */
-.task-completed {
-    opacity: 0.6;
-    text-decoration: line-through;
+.hover-bg-light:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100% !important;
+    position: relative !important;
+  }
+  .d-flex {
+    flex-direction: column !important;
+  }
 }

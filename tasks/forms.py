@@ -40,3 +40,4 @@ class TaskForm(forms.ModelForm):
             self.fields['task_list'].queryset = TaskList.objects.filter(user=user)
             self.fields['task_list'].required = False
             self.fields['task_list'].empty_label = "My Tasks"
+            

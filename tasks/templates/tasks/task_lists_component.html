@@ -1,0 +1,86 @@
+<div class="task-lists-component">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0"><i class="bi bi-collection"></i> Task Lists</h5>
+    <a href="{% url 'create-list' %}" class="btn btn-sm btn-outline-dark">
+      <i class="bi bi-plus"></i>
+    </a>
+  </div>
+  
+  <!-- All Tasks Option -->
+  <div class="mb-3">
+    <a href="{% url 'task-list' %}" 
+       class="d-block p-2 text-decoration-none rounded 
+       {% if selected_list_id == 'all' %}bg-dark text-white{% else %}text-dark hover-bg-light{% endif %}">
+      <i class="bi bi-list-ul"></i> All Tasks
+    </a>
+  </div>
+
+  <hr>
+
+  <!-- Owned Lists Section -->
+  <div class="mb-3">
+    <h6 class="text-muted mb-2">
+      <i class="bi bi-person-fill"></i> My Lists
+    </h6>
+    
+    {% for task_list in owned_lists %}
+    <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded
+         {% if selected_list_id == task_list.id|stringformat:'s' %}bg-dark text-white{% endif %}">
+      <div class="flex-grow-1">
+        <a href="{% url 'task-list' %}?list_id={{ task_list.id }}" 
+           class="text-decoration-none 
+           {% if selected_list_id == task_list.id|stringformat:'s' %}text-white{% else %}text-dark{% endif %}">
+          <i class="bi bi-folder2"></i> {{ task_list.name }}
+        </a>
+      </div>
+      <div class="d-flex">
+        <a href="{% url 'share-list' task_list.id %}" 
+           class="btn btn-sm me-1
+           {% if selected_list_id == task_list.id|stringformat:'s' %}btn-outline-light{% else %}btn-outline-secondary{% endif %}"
+           title="Share List">
+          <i class="bi bi-share-fill"></i>
+        </a>
+        <a href="{% url 'delete-list' task_list.id %}" 
+           class="btn btn-sm btn-outline-danger"
+           onclick="return confirm('Are you sure you want to delete this list and all its tasks?')"
+           title="Delete List">
+          <i class="bi bi-trash"></i>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <hr>
+
+  <!-- Shared Lists Section -->
+  <div class="mb-3">
+    <h6 class="text-muted mb-2">
+      <i class="bi bi-people-fill"></i> Shared With Me
+    </h6>
+    
+    {% for task_list in shared_lists %}
+    <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded
+         {% if selected_list_id == task_list.id|stringformat:'s' %}bg-dark text-white{% endif %}">
+      <div class="flex-grow-1">
+        <a href="{% url 'task-list' %}?list_id={{ task_list.id }}" 
+           class="text-decoration-none 
+           {% if selected_list_id == task_list.id|stringformat:'s' %}text-white{% else %}text-dark{% endif %}">
+          <i class="bi bi-folder2-open"></i> {{ task_list.name }}
+        </a>
+        <small class="d-block {% if selected_list_id == task_list.id|stringformat:'s' %}text-light{% else %}text-muted{% endif %}">
+          by @{{ task_list.user.username }}
+        </small>
+      </div>
+      <a href="{% url 'unshare-list' task_list.id %}" 
+         class="btn btn-sm btn-outline-danger"
+         onclick="return confirm('Are you sure you want to leave this shared list?')"
+         title="Leave this list">
+        <i class="bi bi-x-lg"></i>
+      </a>
+    </div>
+    {% empty %}
+    <p class="text-muted small text-center">No shared lists</p>
+    {% endfor %}
+  </div>
+</div>
