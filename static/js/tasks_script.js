@@ -63,24 +63,4 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   });
-
-  // function to show empty state
-  function showEmptyState() {
-    const container = document.querySelector(".container");
-    const emptyStateHTML = `
-      <div class="text-center py-5" id="empty-state">
-        <i class="bi bi-inbox display-1 text-muted"></i>
-        <h3 class="mt-3 text-muted">No tasks found</h3>
-        <a href="/tasks/create/" class="btn btn-dark btn-lg">
-          <i class="bi bi-plus-circle"></i> Create Your First Task
-        </a>
-      </div>
-    `;
-
-    // insert the empty state section (after the header section)
-    const headerSection = container.querySelector(".row.mb-4");
-    if (headerSection) {
-      headerSection.insertAdjacentHTML("afterend", emptyStateHTML);
-    }
-  }
 });
